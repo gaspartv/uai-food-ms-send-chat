@@ -1,0 +1,40 @@
+## PARA ACESSAR O BANCO DE DADOS ##
+docker exec -it uai-food-db-chat psql -U docker -d postgres
+
+## CRIAR BANCO DE DADOS ##
+CREATE DATABASE "uai-food-db-chat";
+
+## CONECTAR AO BANCO DE DADOS ##
+\c "uai-food-db-chat"
+
+## CRIAR TABELA DE CHATS ##
+CREATE TABLE chats (
+    id VARCHAR(36) PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    contact_name VARCHAR(255) NOT NULL,
+    contact_id VARCHAR(255) NOT NULL,
+    type VARCHAR(255) NOT NULL
+);
+
+## CRIAR TABELA DE MENSAGENS ##
+CREATE TABLE messages (
+    id VARCHAR(36) PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    type VARCHAR(255) NOT NULL,
+    integrationId VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    body VARCHAR(255) NOT NULL,
+    sent_by_contact BOOLEAN NOT NULL,
+    sent_by_name VARCHAR(255) NOT NULL,
+    chat_id VARCHAR(36) NOT NULL, -- Mudança para o mesmo tipo do ID da tabela chats
+    FOREIGN KEY (chat_id) REFERENCES chats(id) -- Referência ao ID da tabela chats
+);
+
+## CRIAR TABELA DE STATUS DE MENSAGENS ##
+CREATE TABLE message_status (
+    id VARCHAR(36) PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(255) NOT NULL,
+    message_id VARCHAR(36) NOT NULL, -- Mudança para o mesmo tipo do ID da tabela messages
+    FOREIGN KEY (message_id) REFERENCES messages(id) -- Referência ao ID da tabela messages
+);
